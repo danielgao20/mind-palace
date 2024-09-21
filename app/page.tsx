@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation'; // Correct import from 'next/navigation'
 import ProjectCard from '@/app/components/ProjectCard';
 import Modal from '@/app/components/Modal';

@@ -29,6 +29,30 @@ async function summarizeDescription(description) {
     }
 }
 
+async function createEdge(description, tag) {
+  try {
+      const completionCreateResponse = await cerebrasClient.chat.completions.create({
+          messages: [{ 
+              role: 'user', 
+              content: `Generate an edge for a knowledge graph where the description is "${description}" and the tag is "${tag}". The edge should have a 'from' node, a 'to' node, and a 'label' representing the relationship. Return the result in JSON format with the keys 'from', 'to', and 'label'.` 
+          }],
+          model: 'llama3.1-8b',
+      });
+
+      const responseContent = completionCreateResponse.choices[0].message.content.trim();
+      const edge = JSON.parse(responseContent); 
+      
+      if (edge.from && edge.to && edge.label) {
+          return edge; 
+      } else {
+          throw new Error('Invalid edge structure');
+      }
+  } catch (error) {
+      console.error('Error creating edge:', error);
+      return null;
+  }
+}
+
 // Connect to MongoDB
 mongoose.connect(process.env.ATLAS_URI)
 .then(() => console.log('Connected to MongoDB'))

@@ -1,26 +1,37 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ProjectCard from '@/app/components/ProjectCard';
 import Modal from '@/app/components/Modal';
 import GridIcon from '/assets/logos/grid-view.png';
 import ListIcon from '/assets/logos/list-view.png';
 import SearchIcon from '/assets/logos/search.png';
 import Image from 'next/image';
-import RootLayout from './layout'; // Import the RootLayout component
+import RootLayout from './layout';
 
 const Dashboard: React.FC = () => {
   const [gridMode, setGridMode] = useState(true);
-  const [projects, setProjects] = useState<{ projectName: string, category: string, content: string }[]>([
-    { projectName: "Assignment 1", category: "Fact", content: "Some fact about assignment 1." },
-    { projectName: "Lab 3", category: "Quote", content: "Inspirational quote from Lab 3." },
-    { projectName: "Workbook Ch. 3", category: "Date", content: "Important date related to Workbook Ch. 3." },
-    { projectName: "Worksheet 2", category: "Fact", content: "Fact from worksheet 2." },
-    { projectName: "Resume", category: "Fact", content: "My latest resume fact." },
-    { projectName: "Assignment 3", category: "Quote", content: "A quote from assignment 3." }
-  ]);
+  const [projects, setProjects] = useState<{ _id: string, category: string, content: string }[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProjectIndex, setSelectedProjectIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/items');
+        if (!response.ok) {
+          throw new Error('Failed to fetch items');
+        }
+        const data = await response.json();
+        setProjects(data);
+      } catch (error) {
+        console.error('Error fetching items:', error);
+      }
+    };
+
+    fetchItems();
+    console.log(projects);
+  }, []);
 
   // Function to open modal for a new project card
   const handleNewProject = () => {
@@ -29,16 +40,41 @@ const Dashboard: React.FC = () => {
   };
 
   // Function to save or update project card content
-  const handleSave = (category: string, content: string) => {
-    if (selectedProjectIndex === null) {
-      const newProject = { projectName: "Untitled", category, content };
-      setProjects([...projects, newProject]);
-    } else {
-      const updatedProjects = [...projects];
-      updatedProjects[selectedProjectIndex] = { ...updatedProjects[selectedProjectIndex], category, content };
-      setProjects(updatedProjects);
+  const handleSave = async (category: string, content: string) => {
+    try {
+      const payload = {
+        description: content,
+        tag: category,
+      };
+
+      const response = await fetch('http://localhost:8000/add/item', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save item');
+      }
+
+      const savedItem = await response.json();
+      console.log('Item saved successfully:', savedItem);
+
+      if (selectedProjectIndex === null) {
+        setProjects([...projects, savedItem]);
+      } else {
+        const updatedProjects = [...projects];
+        updatedProjects[selectedProjectIndex] = savedItem;
+        setProjects(updatedProjects);
+      }
+
+      setIsModalOpen(false);
+      console.log('Item saved successfully:', savedItem);
+    } catch (error) {
+      console.error('Error saving item:', error);
     }
-    setIsModalOpen(false);
   };
 
   // Function to open modal for editing an existing project card
@@ -105,9 +141,8 @@ const Dashboard: React.FC = () => {
           <div className='flex flex-wrap gap-4'>
             {projects.map((project, index) => (
               <ProjectCard
-                key={index}
-                projectName={project.projectName}
-                category={project.category}
+                key={project._id || index}
+                category={project.category} // Category displayed as a tag
                 content={project.content}
                 gridMode={gridMode}
                 onClick={() => handleClickProject(index)}

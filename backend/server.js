@@ -35,10 +35,10 @@ mongoose.connect(process.env.ATLAS_URI)
 .catch(err => console.error('MongoDB connection error:', err));
 
 app.post('/add/item', async (req, res) => {
-    const { description, tags } = req.body;
+    const { description, tag } = req.body;
     const newItem = new Item({
       description,
-      tags,
+      tag,
     });
   
     try {

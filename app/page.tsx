@@ -136,6 +136,7 @@ const Dashboard: React.FC = () => {
     setIsModalOpen(true);
   };
 
+export default function Page() {
   return (
     <div className="h-screen overflow-y-scroll font-manrope" style={{ backgroundColor: '#F7F7F7' }}>
       <div className="flex justify-between items-center gap-4 h-28 py-6 px-10 border-b border-[#CBCBD5]">
@@ -213,6 +214,4 @@ const Dashboard: React.FC = () => {
       <button onClick={handleGraph}>Go to Knowledge Graph</button> {/* Button to navigate */}
     </div>
   );
-};
-
-export default Dashboard;
+}

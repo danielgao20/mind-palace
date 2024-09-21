@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import Image from 'next/image';
-import NavItem from './NavItem'; // Assuming this is the path to your NavItem component
+import NavItem from './NavItem'; // Adjust the path as necessary
 import Logo from '/assets/logos/mp-logo.png';
+import { useRouter } from 'next/navigation'; // Import useRouter
 
 import AllProjectIcon from '/assets/logos/home-icon.svg';
 import YourProject from '/assets/logos/your-projects-icon.svg';
@@ -10,19 +11,25 @@ import Archived from '/assets/logos/archived-icon.svg';
 import Trash from '/assets/logos/trash-icon.svg';
 
 const navItems = [
-  { label: 'Home', iconSrc: AllProjectIcon },
-  { label: 'Your Projects', iconSrc: YourProject },
-  { label: 'Shared with you', iconSrc: SharedWithYou },
-  { label: 'Archived', iconSrc: Archived },
-  { label: 'Trash', iconSrc: Trash }
+  { label: 'Home', iconSrc: AllProjectIcon, route: '/' },
+  { label: 'Your Projects', iconSrc: YourProject, route: '/your-projects' },
+  { label: 'Shared with you', iconSrc: SharedWithYou, route: '/shared-with-you' },
+  { label: 'Archived', iconSrc: Archived, route: '/archived' },
+  { label: 'Trash', iconSrc: Trash, route: '/trash' }
 ];
 
-interface SideNavProps {
-  onNewProject: () => void;
-}
-
-const SideNav: React.FC<SideNavProps> = ({ onNewProject }) => {
+const SideNav: React.FC = ({}) => {
   const [selectedItem, setSelectedItem] = useState<string>('Home');
+  const router = useRouter();
+
+  const handleNavigation = (route: string) => {
+    setSelectedItem(route);
+    router.push(route);
+  };
+
+  const handleGitHubLink = () => {
+    window.open('https://github.com/danielgao20/mind-palace', '_blank');
+  };
 
   return (
     <div className="w-70 bg-[#EDEDED] p-4 shadow-lg flex flex-col justify-between border-r border-gray-300 h-full">
@@ -40,18 +47,18 @@ const SideNav: React.FC<SideNavProps> = ({ onNewProject }) => {
               label={item.label}
               iconSrc={item.iconSrc}
               isSelected={selectedItem === item.label}
-              onClick={() => setSelectedItem(item.label)}
+              onClick={() => handleNavigation(item.route)}
             />
           ))}
         </ul>
       </div>
 
-      {/* new project button */}
+      {/* GitHub button */}
       <button 
         className="bg-aroPurple text-white w-full py-2 h-10 text-base rounded-lg mb-5 font-bold"
-        onClick={onNewProject}
+        onClick={handleGitHubLink} // Open GitHub link in a new tab
       >
-        + New
+        GitHub
       </button>
     </div>
   );

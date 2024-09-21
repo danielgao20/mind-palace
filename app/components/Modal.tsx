@@ -1,22 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import VoiceRecorder from "./VoiceRecorder";
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (category: string, content: string) => void;
-  onDelete: () => void;
   initialCategory?: string;
   initialContent?: string;
 }
 
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSave, onDelete, initialCategory = "Fact", initialContent = "" }) => {
+const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSave, initialCategory = "Fact", initialContent = "" }) => {
   const [category, setCategory] = useState(initialCategory);
   const [content, setContent] = useState(initialContent);
   const [audioInput, setAudioInput] = useState<{
     data: string;
     type: "audio_input";
   } | null>(null);
+
+  useEffect(() => {
+    setCategory(initialCategory);
+    setContent(initialContent);
+  }, [initialCategory, initialContent]);
 
   if (!isOpen) return null;
 
@@ -35,11 +39,12 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSave, onDelete, initia
         console.error('Error getting summary:', error);
         return null;
     }
-}
+  }
 
-  const handleSave = async () => {  
+  const handleSave = async () => {
     if (audioInput) {
-      setContent(await getSummarizedDescription(audioInput.data));
+      const summarizedText = await getSummarizedDescription(audioInput.data);
+      setContent(summarizedText || content);  // Update content with audio transcription
     }
     onSave(category, content);
   };
@@ -48,9 +53,9 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSave, onDelete, initia
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
       <div className="bg-white p-6 rounded-md shadow-md w-96 relative">
         <button
-            onClick={onClose}
-            className="absolute top-2 right-5 text-gray-500 hover:text-gray-700 text-4xl"
-          >
+          onClick={onClose}
+          className="absolute top-2 right-5 text-gray-500 hover:text-gray-700 text-4xl"
+        >
           &times;
         </button>
 
@@ -64,7 +69,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSave, onDelete, initia
 
         {/* Voice input */}
         <VoiceRecorder onRecordingComplete={setAudioInput} />
-    
+
         {/* Category input */}
         <label className="block mb-2 text-black font-semibold">Category</label>
         <select
@@ -78,7 +83,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSave, onDelete, initia
         </select>
 
         <div className="flex justify-end mt-4">
-          <button onClick={onDelete} className="mr-2 p-2 bg-red-500 rounded-md">Delete</button>  
+          <button onClick={onClose} className="mr-2 p-2 bg-red-500 rounded-md">Cancel</button>
           <button onClick={handleSave} className="p-2 bg-blue-500 text-white rounded-md">Save</button>
         </div>
       </div>

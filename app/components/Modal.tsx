@@ -1,10 +1,5 @@
 import React, { useState } from 'react';
 import VoiceRecorder from "./VoiceRecorder";
-const Cerebras = require('@cerebras/cerebras_cloud_sdk');
-
-const client = new Cerebras({
-  apiKey: process.env['CEREBRAS_API_KEY'],
-});
 
 interface ModalProps {
   isOpen: boolean;

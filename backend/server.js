@@ -16,14 +16,12 @@ const client = new Cerebras({
 
 // Call Cerebras API
 async function summarizeDescription(description) {
-    console.log("In summarizeDescription");
     try {
         const completionCreateResponse = await client.chat.completions.create({
         messages: [{ role: 'user', content: `Summarize this description into one sentence: "${description}"` }],
         model: 'llama3.1-8b',
         });
         const improvedDescription = completionCreateResponse.choices[0].message.content.trim();
-        // TODO: This is not working
         console.log("Cerebras response: " + improvedDescription);
         return improvedDescription;
     } catch (error) {
@@ -31,6 +29,16 @@ async function summarizeDescription(description) {
         return description;
     }
 }
+
+app.post('/summarize', async (req, res) => {
+    const { description } = req.body;
+    try {
+        const summarizedDescription = await summarizeDescription(description);
+        res.json({ summarizedDescription });
+    } catch (error) {
+        res.status(500).json({ message: 'Error summarizing description', error });
+    }
+});
 
 async function createEdge(description, tag) {
   try {

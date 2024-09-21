@@ -108,6 +108,28 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  // Function to vector search thoughts
+  const handleSearch = async (query: string) => {
+    try {
+      const response = await fetch('http://localhost:8000/search', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ query }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to search items');
+      }
+  
+      const searchResults = await response.json();
+      setProjects(searchResults);
+    } catch (error) {
+      console.error('Error searching items:', error);
+    }
+  };
+
   // Function to open modal for editing an existing project card
   const handleClickProject = (index: number) => {
     setSelectedProjectIndex(index);
@@ -123,6 +145,7 @@ const Dashboard: React.FC = () => {
             type="text"
             placeholder="Search in Mind Palace"
             className="border-2 border-gray-300 pl-12 p-1.5 rounded w-full h-full bg-transparent focus:border-aroDarkGrey outline-none text-base font-medium text-black"
+            onChange={(e) => handleSearch(e.target.value)}
           />
           <Image
             src={SearchIcon.src}

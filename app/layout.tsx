@@ -15,14 +15,20 @@ import Archived from '/assets/logos/archived-icon.svg';
 import Trash from '/assets/logos/trash-icon.svg';
 
 const navItems = [
-  { label: 'All projects', iconSrc: AllProjectIcon },
-  { label: 'Your projects', iconSrc: YourProject },
+  { label: 'Home', iconSrc: AllProjectIcon },
+  { label: 'Your Projects', iconSrc: YourProject },
   { label: 'Shared with you', iconSrc: SharedWithYou },
   { label: 'Archived', iconSrc: Archived },
   { label: 'Trash', iconSrc: Trash }
 ];
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+  onNewProject
+}: {
+  children: React.ReactNode;
+  onNewProject: () => void;
+}) {
   const [selectedItem, setSelectedItem] = useState<string>('All projects');
 
   return (
@@ -51,7 +57,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
 
             {/* new */}
-            <button className="bg-aroPurple text-white w-full py-2 h-10 text-base rounded-lg mb-5 font-bold">+ New</button>
+            <button 
+              className="bg-aroPurple text-white w-full py-2 h-10 text-base rounded-lg mb-5 font-bold"
+              onClick={onNewProject}
+            >
+              + New
+            </button>
           </div>
 
           {/* page.tsx */}

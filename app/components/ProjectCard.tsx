@@ -1,35 +1,28 @@
-import React from 'react';
-import Image from 'next/image';
-import ProjectIcon from '/assets/logos/project.png';
+import React from "react";
 
-interface ProjectProps {
-    projectName: string;
-    lastUpdate: string;
-    gridMode: boolean;
+interface ProjectCardProps {
+  projectName: string;
+  category: string;
+  content: string;
+  onClick: () => void;
+  gridMode: boolean;
 }
 
-export default function Project({
-    projectName,
-    lastUpdate,
-    gridMode,
-}: ProjectProps) {
-    return (
-        <div 
-            className={`h-fit p-4 rounded-lg border border-aroGrey bg-aroWhite hover:bg-gray-200 transition duration-200 ${!gridMode ? "flex !w-full gap-3 py-2" : "block md:w-[calc(33.33%-12px)] min-h-60"}`}
-            style={{ minWidth: gridMode ? '150px' : '250px' }}
-        >
-            <div className={`rounded ${gridMode ? 'bg-aroDarkGrey' : ''} flex items-center justify-center ${!gridMode ? "w-16 h-16" : "w-full h-36"}`}>
-                <Image 
-                    src={ProjectIcon.src}
-                    width={45}
-                    height={56}
-                    alt={"Project Logo"}
-                />
-            </div>
-            <div className={`text-base text-black ${!gridMode ? "flex-1" : "mt-4"}`}>
-                <p className='font-bold'>{projectName}</p>
-                <p>{lastUpdate}</p>
-            </div>
-        </div>
-    );
-}
+const ProjectCard: React.FC<ProjectCardProps> = ({ projectName, category, content, onClick, gridMode }) => {
+  const truncatedContent = content.length > 100 ? content.slice(0, 100) + '...' : content;
+
+  return (
+    <div
+      onClick={onClick}
+      className={`p-4 border rounded-lg shadow-md bg-white ${gridMode ? 'w-[300px]' : 'w-full'} cursor-pointer`}
+    >
+      <div className="flex justify-between items-center mb-2">
+        <h3 className="font-bold text-lg">{projectName}</h3>
+        <span className="text-sm text-gray-500">{category}</span>
+      </div>
+      <p className="text-sm text-gray-700">{truncatedContent}</p>
+    </div>
+  );
+};
+
+export default ProjectCard;

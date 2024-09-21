@@ -5,9 +5,9 @@ const ItemSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  tags: {
-    type: [String], 
-    default: [],
+  tag: {
+    type: String, 
+    default: "",
   },
 }, {
   timestamps: true, // Automatically add createdAt and updatedAt timestamps

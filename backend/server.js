@@ -16,12 +16,15 @@ const client = new Cerebras({
 
 // Call Cerebras API
 async function summarizeDescription(description) {
+    console.log("In summarizeDescription");
     try {
-        const completionCreateResponse = await cerebrasClient.chat.completions.create({
+        const completionCreateResponse = await client.chat.completions.create({
         messages: [{ role: 'user', content: `Summarize this description into one sentence: "${description}"` }],
         model: 'llama3.1-8b',
         });
         const improvedDescription = completionCreateResponse.choices[0].message.content.trim();
+        // TODO: This is not working
+        console.log("Cerebras response: " + improvedDescription);
         return improvedDescription;
     } catch (error) {
         console.error('Error summarizing description:', error);
@@ -60,8 +63,9 @@ mongoose.connect(process.env.ATLAS_URI)
 
 app.post('/add/item', async (req, res) => {
     const { description, tag } = req.body;
+    const summarizedDescription = await summarizeDescription(description);
     const newItem = new Item({
-      description,
+      description: summarizedDescription,
       tag,
     });
   
@@ -79,6 +83,16 @@ app.get('/items', async (req, res) => {
       res.status(200).json(items);
     } catch (error) {
       res.status(500).json({ message: 'Error fetching items', error });
+    }
+});
+
+app.delete('/delete/item/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+      await Item.findByIdAndDelete(id);
+      res.status(200).json({ message: 'Item deleted successfully' });
+    } catch (error) {
+      res.status(500).json({ message: 'Error deleting item', error });
     }
 });
 

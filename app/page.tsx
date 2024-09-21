@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation'; // Correct import from 'next/navigation'
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import ProjectCard from '@/app/components/ProjectCard';
 import Modal from '@/app/components/Modal';
 import GridIcon from '/assets/logos/grid-view.png';
@@ -24,14 +24,19 @@ const Dashboard: React.FC = () => {
           throw new Error('Failed to fetch items');
         }
         const data = await response.json();
-        setProjects(data);
+        const formattedProjects = data.map((item: any) => ({
+          _id: item._id,
+          category: item.tag , 
+          content: item.description,
+        }));
+        setProjects(formattedProjects);
+        console.log(data);
       } catch (error) {
         console.error('Error fetching items:', error);
       }
     };
 
     fetchItems();
-    console.log(projects);
   }, []);
 
   // Function to open modal for a new project card
@@ -79,6 +84,27 @@ const Dashboard: React.FC = () => {
       console.log('Item saved successfully:', savedItem);
     } catch (error) {
       console.error('Error saving item:', error);
+    }
+  };
+
+  // Function to delete item
+  const handleDelete = async () => {
+    if (selectedProjectIndex !== null) {
+      const itemId = projects[selectedProjectIndex]._id;
+      try {
+        const response = await fetch(`http://localhost:8000/delete/item/${itemId}`, {
+          method: 'DELETE',
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to delete item');
+        }
+
+        setProjects(projects.filter((_, index) => index !== selectedProjectIndex));
+        setIsModalOpen(false);
+      } catch (error) {
+        console.error('Error deleting item:', error);
+      }
     }
   };
 
@@ -145,8 +171,7 @@ const Dashboard: React.FC = () => {
         <div className='flex flex-wrap gap-4'>
           {projects.map((project, index) => (
             <ProjectCard
-              key={index}
-              projectName={project.projectName}
+              key={project._id || index}
               category={project.category}
               content={project.content}
               gridMode={gridMode}
@@ -160,6 +185,7 @@ const Dashboard: React.FC = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSave={handleSave}
+        onDelete={handleDelete}
       />
       <button onClick={handleGraph}>Go to Knowledge Graph</button> {/* Button to navigate */}
     </div>

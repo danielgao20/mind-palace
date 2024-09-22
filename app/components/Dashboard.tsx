@@ -15,6 +15,8 @@ const Dashboard: React.FC = () => {
   const [projects, setProjects] = useState<{ _id: string, category: string, content: string }[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProjectIndex, setSelectedProjectIndex] = useState<number | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -117,6 +119,28 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  // Function to vector search thoughts
+  const handleSearch = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/search', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ query: searchQuery }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to search items');
+      }
+    
+      const searchResults = await response.json();
+      setProjects(searchResults);
+    } catch (error) {
+        console.error('Error searching items:', error);
+      }
+    };
+
   // Function to open modal for editing an existing project card
   const handleClickProject = (index: number) => {
     setSelectedProjectIndex(index);
@@ -131,8 +155,17 @@ const Dashboard: React.FC = () => {
           <input
             type="text"
             placeholder="Search in Mind Palace"
-            className="border-2 border-gray-300 pl-12 p-1.5 rounded w-full h-full bg-transparent focus:border-aroDarkGrey outline-none text-base font-medium text-black"
+            className="border-2 border-gray-300 p-2 rounded-l w-full bg-transparent focus:border-aroDarkGrey outline-none text-base font-medium text-black"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)} 
           />
+          <button
+            onClick={handleSearch}
+            className="bg-blue-500 text-white px-4 rounded-r"
+            disabled={loading} 
+          >
+            Search
+          </button>
           <Image
             src={SearchIcon.src}
             width={18}
@@ -141,6 +174,7 @@ const Dashboard: React.FC = () => {
             className='absolute left-5 inline top-1/2 -translate-y-1/2'
           />
         </div>
+
         {/* profile */}
         <div className="flex items-center justify-center gap-2.5 bg-aroWhite rounded-md py-2.5 px-5 border-2 border-gray-200 hover:bg-gray-200"> 
           <div className='w-10 h-10 rounded-full bg-[#414172] flex items-center justify-center'>
@@ -177,17 +211,23 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className='flex flex-wrap gap-4'>
-          {projects.map((project, index) => (
-            <ProjectCard
-              key={project._id || index}
-              category={project.category}
-              content={project.content}
-              gridMode={gridMode}
-              onClick={() => handleClickProject(index)}
-            />
-          ))}
-        </div>
+        {loading ? (
+          <div className="flex justify-center items-center">
+            <svg className="w-16 h-16 animate-spin" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12a1 1 0 0 1-10 0 1 1 0 0 0-10 0"/><path d="M7 20.7a1 1 0 1 1 5-8.7 1 1 0 1 0 5-8.6"/><path d="M7 3.3a1 1 0 1 1 5 8.6 1 1 0 1 0 5 8.6"/><circle cx="12" cy="12" r="10"/></svg>
+          </div>
+        ) : (
+          <div className='flex flex-wrap gap-4'>
+            {projects.map((project, index) => (
+              <ProjectCard
+                key={project._id || index}
+                category={project.category}
+                content={project.content}
+                gridMode={gridMode}
+                onClick={() => handleClickProject(index)}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       <Modal

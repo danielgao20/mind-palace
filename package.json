@@ -21,6 +21,7 @@
     "react-dom": "^18",
     "react-graph-vis": "^1.0.7",
     "react-knowledge-graph": "^0.3.17",
+    "sharp": "^0.33.5",
     "typeface-manrope": "^1.0.0",
     "vis-data": "^7.1.9",
     "vis-network": "^9.1.9"

@@ -1,13 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from 'next/image';
 import NavItem from './NavItem'; // Adjust the path as necessary
 import Logo from '/assets/logos/mp-logo.png';
-import { useRouter } from 'next/navigation'; // Import useRouter
-
+import { useRouter, usePathname } from 'next/navigation'; // Import useRouter and usePathname
 import AllProjectIcon from '/assets/logos/home-icon.svg';
-// import YourProject from '/assets/logos/your-projects-icon.svg';
 import KnowledgeGraph from "/assets/logos/knowledge-graph.svg";
-// import SharedWithYou from '/assets/logos/shared-icon.svg';
 import Learn from '/assets/logos/learn.svg'
 import Archived from '/assets/logos/archived-icon.svg';
 import Trash from '/assets/logos/trash-icon.svg';
@@ -20,13 +17,26 @@ const navItems = [
   { label: 'Trash', iconSrc: Trash, route: '/trash' }
 ];
 
-const SideNav: React.FC = ({}) => {
-  const [selectedItem, setSelectedItem] = useState<string>('Home');
+const SideNav: React.FC = () => {
   const router = useRouter();
+  const pathname = usePathname();
+  const [selectedItem, setSelectedItem] = useState<string>('Home');
 
-  const handleNavigation = (route: string) => {
-    setSelectedItem(route);
-    router.push(route);
+  useEffect(() => {
+    const currentItem = navItems.find(item => item.route === pathname);
+    if (currentItem) {
+      setSelectedItem(currentItem.label);
+    }
+  }, [pathname]);
+
+  const handleNavigation = (route: string, label: string) => {
+    setSelectedItem(label);
+    if (route === '/' || route === '/knowledge-graph') {
+      router.push(route);
+    } else {
+      // For incomplete pages, show an alert instead of navigating
+      alert("Coming soon!");
+    }
   };
 
   const handleGitHubLink = () => {
@@ -36,11 +46,10 @@ const SideNav: React.FC = ({}) => {
   return (
     <div className="w-70 bg-[#EDEDED] p-4 shadow-lg flex flex-col justify-between border-r border-gray-300 h-full">
       <div>
-        {/* aro logo */}
+        {/* ARO logo */}
         <div className="flex justify-center mb-8 mt-8">
           <Image src={Logo} alt="ARO Logo" width={126} height={42} />
         </div>
-
         {/* navigation items */}
         <ul className="space-y-2">
           {navItems.map(item => (
@@ -49,16 +58,15 @@ const SideNav: React.FC = ({}) => {
               label={item.label}
               iconSrc={item.iconSrc}
               isSelected={selectedItem === item.label}
-              onClick={() => handleNavigation(item.route)}
+              onClick={() => handleNavigation(item.route, item.label)}
             />
           ))}
         </ul>
       </div>
-
       {/* GitHub button */}
       <button 
         className="bg-aroPurple text-white w-full py-2 h-10 text-base rounded-lg mb-5 font-bold"
-        onClick={handleGitHubLink} // Open GitHub link in a new tab
+        onClick={handleGitHubLink}
       >
         GitHub
       </button>

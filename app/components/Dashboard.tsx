@@ -10,6 +10,7 @@ import SearchIcon from '/assets/logos/search.png';
 import Image from 'next/image';
 
 const Dashboard: React.FC = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const router = useRouter(); // Correct router hook
   const [gridMode, setGridMode] = useState(true);
   const [projects, setProjects] = useState<{ _id: string, category: string, content: string }[]>([]);
@@ -26,6 +27,7 @@ const Dashboard: React.FC = () => {
           throw new Error('Failed to fetch items');
         }
         const data = await response.json();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const formattedProjects = data.map((item: any) => ({
           _id: item._id,
           category: item.tag , 
@@ -182,7 +184,7 @@ const Dashboard: React.FC = () => {
         {/* profile */}
         <div className="flex items-center justify-center gap-2.5 bg-aroWhite rounded-md py-2.5 px-5 border-2 border-gray-200 hover:bg-gray-200"> 
           <div className='w-10 h-10 rounded-full bg-[#414172] flex items-center justify-center'>
-            <p className='text-xl font-semibold text-center'>S</p>
+            <p className='text-xl font-semibold text-center'>H</p>
           </div>
           <div>
             <p className='text-black font-semibold text-sm'>Helena Zhou</p>

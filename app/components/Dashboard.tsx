@@ -121,6 +121,7 @@ const Dashboard: React.FC = () => {
 
   // Function to vector search thoughts
   const handleSearch = async () => {
+    setLoading(true);
     try {
       const response = await fetch('http://localhost:8000/search', {
         method: 'POST',
@@ -135,11 +136,14 @@ const Dashboard: React.FC = () => {
       }
     
       const searchResults = await response.json();
+      console.log(searchResults);
       setProjects(searchResults);
     } catch (error) {
         console.error('Error searching items:', error);
-      }
-    };
+      } finally {
+        setLoading(false);
+    }
+  };
 
   // Function to open modal for editing an existing project card
   const handleClickProject = (index: number) => {
@@ -151,17 +155,17 @@ const Dashboard: React.FC = () => {
     <div className="h-screen overflow-y-scroll font-manrope" style={{ backgroundColor: '#F7F7F7' }}>
       <div className="flex justify-between items-center gap-4 h-28 py-6 px-10 border-b border-[#CBCBD5]">
         {/* search bar */}
-        <div className='inline-block relative w-full h-full'>
+        <div className='inline-block relative w-full h-full flex items-center'>
           <input
             type="text"
             placeholder="Search in Mind Palace"
-            className="border-2 border-gray-300 p-2 rounded-l w-full bg-transparent focus:border-aroDarkGrey outline-none text-base font-medium text-black"
+            className="border-2 border-gray-300 pl-12 py-2 rounded w-full bg-transparent focus:border-aroDarkGrey outline-none text-base font-medium text-black mr-4"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)} 
           />
           <button
             onClick={handleSearch}
-            className="bg-blue-500 text-white px-4 rounded-r"
+            className="bg-blue-500 text-white p-2 rounded"
             disabled={loading} 
           >
             Search

@@ -65,10 +65,10 @@ const SideNav: React.FC = () => {
       </div>
       {/* GitHub button */}
       <button 
-        className="bg-aroPurple text-white w-full py-2 h-10 text-base rounded-lg mb-5 font-bold"
+        className="bg-aroPurple text-white w-full py-2 h-10 text-sm rounded-lg mb-5 font-bold"
         onClick={handleGitHubLink}
       >
-        GitHub
+        Learn More
       </button>
     </div>
   );

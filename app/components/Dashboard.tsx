@@ -167,7 +167,7 @@ const Dashboard: React.FC = () => {
           />
           <button
             onClick={handleSearch}
-            className="bg-blue-500 text-white p-2 rounded"
+            className="bg-aroPurple text-white p-2 rounded"
             disabled={loading} 
           >
             Search

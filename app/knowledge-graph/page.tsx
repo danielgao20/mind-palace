@@ -61,7 +61,7 @@ const KnowledgeGraphPage = () => {
   return (
     <div className="h-screen overflow-y-scroll font-manrope" style={{ backgroundColor: '#F7F7F7' }}>
       <div className="p-6">
-        <h1 className="text-2xl font-bold mb-4 text-slate-500">Knowledge Graph</h1>
+        <h1 className="text-2xl font-bold mb-4 text-aroPurple">Knowledge Graph</h1>
         <div style={{ height: "calc(100vh - 120px)", border: "1px solid #ddd", borderRadius: "8px", overflow: "hidden" }}>
           <Graph
             graph={sampleData}

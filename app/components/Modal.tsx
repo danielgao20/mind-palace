@@ -84,8 +84,8 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSave, onDelete, initia
         </select>
 
         <div className="flex justify-end mt-4">
-          <button onClick={onDelete} className="mr-2 p-2 bg-red-500 rounded-md">Delete</button>  
-          <button onClick={handleSave} className="p-2 bg-blue-500 text-white rounded-md">Save</button>
+          <button onClick={onDelete} className="mr-2 p-2 bg-aroPurple rounded-md">Delete</button>  
+          <button onClick={handleSave} className="p-2 bg-aroPurple text-white rounded-md">Save</button>
         </div>
       </div>
     </div>

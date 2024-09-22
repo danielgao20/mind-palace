@@ -41,13 +41,13 @@ const Dashboard: React.FC = () => {
 
   // Function to open modal for a new project card
   const handleNewProject = () => {
-    setSelectedProjectIndex(null);
-    setIsModalOpen(true);
+    setSelectedProjectIndex(null); // No project selected, creating a new one
+    setIsModalOpen(true); // Open the modal
   };
 
-  // const handleGraph = () => {
-  //   router.push('/knowledge-graph'); // Navigate to the knowledge graph page
-  // };
+//   const handleGraph = () => {
+//     router.push('/knowledge-graph'); // Navigate to the knowledge graph page
+//   };
 
   // Function to save or update project card content
   const handleSave = async (category: string, content: string) => {
@@ -56,7 +56,8 @@ const Dashboard: React.FC = () => {
         description: content,
         tag: category,
       };
-
+  
+      // Make the backend API call
       const response = await fetch('http://localhost:8000/add/item', {
         method: 'POST',
         headers: {
@@ -64,28 +65,36 @@ const Dashboard: React.FC = () => {
         },
         body: JSON.stringify(payload),
       });
-
+  
       if (!response.ok) {
         throw new Error('Failed to save item');
       }
-
+  
+      // Get the saved item from the server response
       const savedItem = await response.json();
       console.log('Item saved successfully:', savedItem);
-
+  
+      // Update the local projects array
       if (selectedProjectIndex === null) {
-        setProjects([...projects, savedItem]);
+        // If no project was selected, add a new project with the saved item
+        const newProject = { projectName: "Untitled", ...savedItem };
+        setProjects([...projects, newProject]);
       } else {
+        // If a project was selected, update the existing project
         const updatedProjects = [...projects];
-        updatedProjects[selectedProjectIndex] = savedItem;
+        updatedProjects[selectedProjectIndex] = {
+          ...updatedProjects[selectedProjectIndex],
+          ...savedItem,
+        };
         setProjects(updatedProjects);
       }
-
+  
+      // Close the modal after saving
       setIsModalOpen(false);
-      console.log('Item saved successfully:', savedItem);
     } catch (error) {
       console.error('Error saving item:', error);
     }
-  };
+  };  
 
   // Function to delete item
   const handleDelete = async () => {
@@ -138,8 +147,8 @@ const Dashboard: React.FC = () => {
             <p className='text-xl font-semibold text-center'>S</p>
           </div>
           <div>
-            <p className='text-black font-semibold text-sm'>Sarah Fan</p>
-            <p className='text-[#939393] font-medium text-xs'>colegawin@gmail.com</p>
+            <p className='text-black font-semibold text-sm'>Helena Zhou</p>
+            <p className='text-[#939393] font-medium text-xs'>helenazhou@gmail.com</p>
           </div>
         </div>
       </div>
@@ -186,8 +195,10 @@ const Dashboard: React.FC = () => {
         onClose={() => setIsModalOpen(false)}
         onSave={handleSave}
         onDelete={handleDelete}
+        initialCategory={selectedProjectIndex !== null ? projects[selectedProjectIndex].category : undefined}
+        initialContent={selectedProjectIndex !== null ? projects[selectedProjectIndex].content : undefined}
       />
-      {/* <button onClick={handleGraph}>Go to Knowledge Graph</button> Button to navigate */}
+      {/* <button onClick={handleGraph}>Go to Knowledge Graph</button> */}
 
       <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2">
         <button

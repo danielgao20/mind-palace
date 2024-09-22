@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import VoiceRecorder from "./VoiceRecorder";
 
 interface ModalProps {
@@ -17,6 +17,11 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSave, onDelete, initia
     data: string;
     type: "audio_input";
   } | null>(null);
+
+  useEffect(() => {
+    setCategory(initialCategory);
+    setContent(initialContent);
+  }, [initialCategory, initialContent]);
 
   if (!isOpen) return null;
 
@@ -39,7 +44,8 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSave, onDelete, initia
 
   const handleSave = async () => {  
     if (audioInput) {
-      setContent(await getSummarizedDescription(audioInput.data));
+      const summarizedText = await getSummarizedDescription(audioInput.data);
+      setContent(summarizedText || content);
     }
     onSave(category, content);
   };

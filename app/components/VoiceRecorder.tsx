@@ -54,7 +54,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
 
   return (
     <button
-      className="flex items-center space-x-2 bg-white text-black dark:bg-black dark:text-white"
+      className="flex items-center space-x-2 text-black pt-6 pb-6"
       onClick={isRecording ? stopRecording : startRecording}
     >
       {isRecording ? (

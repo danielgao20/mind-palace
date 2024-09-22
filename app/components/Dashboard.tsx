@@ -239,8 +239,6 @@ const Dashboard: React.FC = () => {
         onClose={() => setIsModalOpen(false)}
         onSave={handleSave}
         onDelete={handleDelete}
-        initialCategory={selectedProjectIndex !== null ? projects[selectedProjectIndex].category : undefined}
-        initialContent={selectedProjectIndex !== null ? projects[selectedProjectIndex].content : undefined}
       />
       {/* <button onClick={handleGraph}>Go to Knowledge Graph</button> */}
 

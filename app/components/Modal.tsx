@@ -45,7 +45,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSave, onDelete, initia
   const handleSave = async () => {  
     if (audioInput) {
       const summarizedText = await getSummarizedDescription(audioInput.data);
-      setContent(summarizedText || content);
+      setContent(summarizedText);
     }
     onSave(category, content);
   };

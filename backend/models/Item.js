@@ -9,8 +9,12 @@ const ItemSchema = new mongoose.Schema({
     type: String, 
     default: "",
   },
+  embedding: {
+    type: [Number],
+    required: true,
+  },
 }, {
-  timestamps: true, // Automatically add createdAt and updatedAt timestamps
+  timestamps: true,
 });
 
 const Item = mongoose.model('Item', ItemSchema);

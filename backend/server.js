@@ -29,7 +29,7 @@ async function generateEmbedding(text) {
 async function summarizeDescription(description) {
     try {
         const completionCreateResponse = await client.chat.completions.create({
-        messages: [{ role: 'user', content: `Summarize this description into one sentence: "${description}"` }],
+        messages: [{ role: 'user', content: `Summarize this into one sentence: "${description}"` }],
         model: 'llama3.1-8b',
         });
         const improvedDescription = completionCreateResponse.choices[0].message.content.trim();
@@ -88,7 +88,8 @@ app.post('/add/item', async (req, res) => {
     if (!embedding) {
         return res.status(500).json({ message: 'Error generating embedding' });
     }
-    
+    console.log("Embedding: " + embedding);
+
     const newItem = new Item({
       description: summarizedDescription,
       tag,
@@ -109,6 +110,44 @@ app.get('/items', async (req, res) => {
       res.status(200).json(items);
     } catch (error) {
       res.status(500).json({ message: 'Error fetching items', error });
+    }
+});
+
+app.post('/search', async (req, res) => {
+    try {
+      const { query } = req.body;
+      const queryVector = await generateEmbedding(query);
+      if (!queryVector) {
+        return res.status(500).json({ message: 'Error generating query vector in search' });
+      }
+
+      const client = await mongoose.connection.getClient();
+      const database = client.db('MindPalace');
+      const collection = database.collection('items');
+      const results = await collection.aggregate([
+        {
+          $vectorSearch: {
+            index: 'vector_index',
+            path: 'embedding',
+            queryVector: queryVector,
+            numCandidates: 10,
+            limit: 10,
+          },
+        },
+        {
+            $project: {
+                _id: 1,
+                description: 1,
+                tag: 1,
+                score: { $meta: 'vectorSearchScore' },
+            },
+        },
+      ]).toArray();
+  
+      res.json(results);
+    } catch (error) {
+      console.error('Error during vector search:', error);
+      res.status(500).send('Internal Server Error');
     }
 });
 

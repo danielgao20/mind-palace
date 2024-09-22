@@ -100,7 +100,7 @@ const KnowledgeGraphPage = () => {
   const [selectedNode, setSelectedNode] = useState(null);
 
   const events = {
-    select: ({ nodes, edges }) => {
+    select: ({ nodes }) => {
       if (nodes.length > 0) {
         const node = sampleData.nodes.find(n => n.id === nodes[0]);
         setSelectedNode(node);

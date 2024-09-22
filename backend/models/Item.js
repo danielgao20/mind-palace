@@ -13,6 +13,10 @@ const ItemSchema = new mongoose.Schema({
     type: [Number],
     required: true,
   },
+  edges: [{
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Item',
+  }]
 }, {
   timestamps: true,
 });

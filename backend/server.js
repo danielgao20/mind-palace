@@ -5,7 +5,9 @@ const axios = require('axios');
 require('dotenv').config();
 
 const Cerebras = require('@cerebras/cerebras_cloud_sdk');
-const Item = require('./models/item'); 
+const Item = require('./models/item');
+const Edge = require('./models/edge'); // Import the Edge model
+
 
 const app = express();
 app.use(cors());
@@ -51,34 +53,36 @@ app.post('/summarize', async (req, res) => {
     }
 });
 
-async function createEdge(description, tag) {
-  try {
-      const completionCreateResponse = await cerebrasClient.chat.completions.create({
-          messages: [{ 
-              role: 'user', 
-              content: `Generate an edge for a knowledge graph where the description is "${description}" and the tag is "${tag}". The edge should have a 'from' node, a 'to' node, and a 'label' representing the relationship. Return the result in JSON format with the keys 'from', 'to', and 'label'.` 
-          }],
-          model: 'llama3.1-8b',
-      });
+// Helper function for cosine similarity
+function cosineSimilarity(vecA, vecB) {
+  const dotProduct = vecA.reduce((sum, val, i) => sum + val * vecB[i], 0);
+  const magnitudeA = Math.sqrt(vecA.reduce((sum, val) => sum + val * val, 0));
+  const magnitudeB = Math.sqrt(vecB.reduce((sum, val) => sum + val * val, 0));
+  return dotProduct / (magnitudeA * magnitudeB);
+}
 
-      const responseContent = completionCreateResponse.choices[0].message.content.trim();
-      const edge = JSON.parse(responseContent); 
-      
-      if (edge.from && edge.to && edge.label) {
-          return edge; 
-      } else {
-          throw new Error('Invalid edge structure');
-      }
-  } catch (error) {
-      console.error('Error creating edge:', error);
-      return null;
-  }
+// Helper function to determine if embeddings are similar
+function isEmbeddingSimilar(embeddingA, embeddingB, threshold = 0.8) {
+  const similarity = cosineSimilarity(embeddingA, embeddingB);
+  return similarity > threshold;
 }
 
 // Connect to MongoDB
 mongoose.connect(process.env.ATLAS_URI)
 .then(() => console.log('Connected to MongoDB'))
 .catch(err => console.error('MongoDB connection error:', err));
+
+// Update: Fetch items and create edges between them
+app.get('/items', async (req, res) => {
+    try {
+        const items = await Item.find({});
+        const edges = await Edge.find({});
+
+        res.status(200).json({ items, edges });
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching items or edges', error });
+    }
+});
 
 app.post('/add/item', async (req, res) => {
     const { description, tag } = req.body;
@@ -88,78 +92,42 @@ app.post('/add/item', async (req, res) => {
     if (!embedding) {
         return res.status(500).json({ message: 'Error generating embedding' });
     }
-    console.log("Embedding: " + embedding);
 
     const newItem = new Item({
-      description: summarizedDescription,
-      tag,
-      embedding,
+        description: summarizedDescription,
+        tag,
+        embedding,
     });
-  
+
     try {
-      const savedItem = await newItem.save();
-      res.status(201).json(savedItem);
+        const savedItem = await newItem.save();
+
+        // After saving, find similar items to create edges
+        const items = await Item.find({ _id: { $ne: savedItem._id } });
+
+        // Create edges based on tag or embedding similarity
+        for (let item of items) {
+            if (item.tag === savedItem.tag) {
+                await new Edge({
+                    from: savedItem._id,
+                    to: item._id,
+                    label: `Related by tag: ${savedItem.tag}`
+                }).save();
+            } else if (isEmbeddingSimilar(savedItem.embedding, item.embedding)) {
+                await new Edge({
+                    from: savedItem._id,
+                    to: item._id,
+                    label: 'Related by embedding similarity'
+                }).save();
+            }
+        }
+
+        res.status(201).json(savedItem);
     } catch (error) {
-      res.status(400).json({ message: 'Error saving item', error });
+        res.status(400).json({ message: 'Error saving item or creating edges', error });
     }
 });
 
-app.get('/items', async (req, res) => {
-    try {
-      const items = await Item.find({});
-      res.status(200).json(items);
-    } catch (error) {
-      res.status(500).json({ message: 'Error fetching items', error });
-    }
-});
-
-app.post('/search', async (req, res) => {
-    try {
-      const { query } = req.body;
-      const queryVector = await generateEmbedding(query);
-      if (!queryVector) {
-        return res.status(500).json({ message: 'Error generating query vector in search' });
-      }
-
-      const client = await mongoose.connection.getClient();
-      const database = client.db('MindPalace');
-      const collection = database.collection('items');
-      const results = await collection.aggregate([
-        {
-          $vectorSearch: {
-            index: 'vector_index',
-            path: 'embedding',
-            queryVector: queryVector,
-            numCandidates: 10,
-            limit: 10,
-          },
-        },
-        {
-            $project: {
-                _id: 1,
-                description: 1,
-                tag: 1,
-                score: { $meta: 'vectorSearchScore' },
-            },
-        },
-      ]).toArray();
-  
-      res.json(results);
-    } catch (error) {
-      console.error('Error during vector search:', error);
-      res.status(500).send('Internal Server Error');
-    }
-});
-
-app.delete('/delete/item/:id', async (req, res) => {
-    const { id } = req.params;
-    try {
-      await Item.findByIdAndDelete(id);
-      res.status(200).json({ message: 'Item deleted successfully' });
-    } catch (error) {
-      res.status(500).json({ message: 'Error deleting item', error });
-    }
-});
 
 const PORT = 8000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

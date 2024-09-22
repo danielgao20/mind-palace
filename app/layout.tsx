@@ -12,7 +12,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased font-manrope">
-        <div className="flex h-screen bg-gray-100">
+        <div className="antialiased font-manrope flex h-screen bg-gray-100">
           <SideNav/>
 
           {/* Main content */}

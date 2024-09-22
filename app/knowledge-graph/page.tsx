@@ -67,7 +67,7 @@ const KnowledgeGraphPage = () => {
     <RootLayout>
       <div className="h-screen overflow-y-scroll font-manrope" style={{ backgroundColor: '#F7F7F7' }}>
         <div className="p-6">
-          <h1 className="text-2xl font-bold mb-4">Knowledge Graph</h1>
+          <h1 className="text-2xl font-bold mb-4 text-slate-600">Knowledge Graph</h1>
           <div style={{ height: "calc(100vh - 120px)", border: "1px solid #ddd", borderRadius: "8px", overflow: "hidden" }}>
             <Graph
               graph={{ nodes, edges }}

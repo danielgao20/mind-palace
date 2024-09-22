@@ -45,9 +45,9 @@ const Dashboard: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleGraph = () => {
-    router.push('/knowledge-graph'); // Navigate to the knowledge graph page
-  };
+  // const handleGraph = () => {
+  //   router.push('/knowledge-graph'); // Navigate to the knowledge graph page
+  // };
 
   // Function to save or update project card content
   const handleSave = async (category: string, content: string) => {
@@ -187,7 +187,7 @@ const Dashboard: React.FC = () => {
         onSave={handleSave}
         onDelete={handleDelete}
       />
-      <button onClick={handleGraph}>Go to Knowledge Graph</button> {/* Button to navigate */}
+      {/* <button onClick={handleGraph}>Go to Knowledge Graph</button> Button to navigate */}
 
       <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2">
         <button

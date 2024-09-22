@@ -5,15 +5,17 @@ import Logo from '/assets/logos/mp-logo.png';
 import { useRouter } from 'next/navigation'; // Import useRouter
 
 import AllProjectIcon from '/assets/logos/home-icon.svg';
-import YourProject from '/assets/logos/your-projects-icon.svg';
-import SharedWithYou from '/assets/logos/shared-icon.svg';
+// import YourProject from '/assets/logos/your-projects-icon.svg';
+import KnowledgeGraph from "/assets/logos/knowledge-graph.svg";
+// import SharedWithYou from '/assets/logos/shared-icon.svg';
+import Learn from '/assets/logos/learn.svg'
 import Archived from '/assets/logos/archived-icon.svg';
 import Trash from '/assets/logos/trash-icon.svg';
 
 const navItems = [
   { label: 'Home', iconSrc: AllProjectIcon, route: '/' },
-  { label: 'Your Projects', iconSrc: YourProject, route: '/your-projects' },
-  { label: 'Shared with you', iconSrc: SharedWithYou, route: '/shared-with-you' },
+  { label: 'Visualize', iconSrc: KnowledgeGraph, route: '/knowledge-graph' },
+  { label: 'Learn', iconSrc: Learn, route: '/learn' },
   { label: 'Archived', iconSrc: Archived, route: '/archived' },
   { label: 'Trash', iconSrc: Trash, route: '/trash' }
 ];

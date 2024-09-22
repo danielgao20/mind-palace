@@ -188,6 +188,15 @@ const Dashboard: React.FC = () => {
         onDelete={handleDelete}
       />
       <button onClick={handleGraph}>Go to Knowledge Graph</button> {/* Button to navigate */}
+
+      <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2">
+        <button
+          className="bg-aroPurple text-white w-32 py-3 text-base rounded-full font-bold shadow-lg"
+          onClick={handleNewProject}
+        >
+          + New
+        </button>
+      </div>
     </div>
   );
 };

@@ -1,45 +1,89 @@
-Run the frontend:
-cd app
-npm run dev
+# Mind Palace
 
-Run the backend:
-cd backend
-python embeddings.py
-node server.js
+## Project Overview
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Mind Palace is a revolutionary personal knowledge management tool that helps users organize, connect, and retain vast amounts of information. Inspired by the need to manage information overload in our daily lives, Mind Palace serves as a digital "second brain," allowing users to effortlessly capture ideas, visualize connections, and discover insights.
 
-## Getting Started
+## Features
 
-First, run the development server:
+- **Intuitive note-taking**: Effortlessly capture and organize ideas.
+- **AI-powered categorization**: Automatically categorize and connect related concepts.
+- **Interactive knowledge graph**: Visualize relationships between notes.
+- **Advanced search**: Quickly retrieve and uncover connections between pieces of information.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Tech Stack
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Frontend**: Next.js, Tailwind CSS
+- **Backend**: Node.js
+- **Database**: MongoDB with vector embeddings
+- **AI**: Cerebras AI for natural language processing
+- **Visualization**: Vis.js for interactive knowledge graphs
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## How to Run
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Frontend
 
-## Learn More
+1. Clone the repository and navigate to the `app` folder:
+   ```
+   cd app
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+2. Install dependencies:
+   ```
+   npm install
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. Run the development server:
+   ```
+   npm run dev
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+4. Open [http://localhost:3000](http://localhost:3000) to view the app in your browser.
 
-## Deploy on Vercel
+### Backend
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Navigate to the `backend` folder:
+   ```
+   cd backend
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+2. Install dependencies:
+   ```
+   npm install
+   ```
+
+3. Run the AI processing script for embeddings:
+   ```
+   python embeddings.py
+   ```
+
+4. Start the backend server:
+   ```
+   node server.js
+   ```
+
+## Challenges
+
+- Optimizing vector embeddings within MongoDB for fast retrieval.
+- Designing a user-friendly interface for complex knowledge graphs.
+- Balancing quick idea capture with comprehensive note-taking.
+
+## Accomplishments
+
+- Seamless transition from note-taking to visualizing connected ideas.
+- Advanced AI-driven connections between unrelated concepts.
+- User-friendly interface with high-performance query handling.
+
+## Future Plans
+
+- Collaborative features for shared knowledge spaces.
+- Mobile app development.
+- Productivity tool integrations (e.g., Notion, Evernote).
+- Enhanced AI suggestions and privacy features.
+
+## Credits
+
+Mind Palace was built by:
+- Helena Zhou
+- Ryan Chang
+- Daniel Gao
